@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from add import db_file
 import argparse
 
 if __name__ == '__main__':
