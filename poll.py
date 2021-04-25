@@ -20,7 +20,7 @@ def updateAllActiveQuestions():
     qs = getAllActiveQuestions()
     for q in qs:
         data = getQuestionData(q['site'], q['seqid'])
-        addViewCount(q['qid'], data['items'][0]['view_count'])
+        addViewCount(q['qid'], data)
 
 
 if __name__ == '__main__':
