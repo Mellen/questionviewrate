@@ -1,4 +1,5 @@
 import sqlite3
+import time
 
 db_file="questions.db"
 
@@ -26,3 +27,27 @@ def createDB():
     con.commit()
     con.close()
     print('database created')
+
+def addQuestion(site, data):
+    con = sqlite3.connect(db_file)
+    cur = con.cursor()
+
+    question = data['items'][0]
+    
+    cur.execute('''INSERT INTO questions
+                    (site, seqid, created_date, title, link, active)
+                    VALUES
+                    (?, ?, ?, ?, ?, 1);''',
+                (site, question['question_id'], question['creation_date'], question['title'], question['link']))
+
+    qid = cur.lastrowid
+
+    cur.execute('''INSERT INTO views
+                   (qid, view_count, record_date)
+                   VALUES
+                   (?, ?, ?);''',
+                (qid, question['view_count'], int(time.time())))
+    
+    con.commit()
+    con.close()
+    

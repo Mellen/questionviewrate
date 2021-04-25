@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 
-from db import db_file, createDB
+from poll import getQuestionData
+from db import db_file, createDB, addQuestion
 import argparse
 from os.path import isfile
 
 def add(site, qid):
     if not isfile(db_file):
         createDB()
+    qData = getQuestionData(site, qid);
+    print('adding question')
+    addQuestion(site, qData)
+    print('question added')
     
 
 if __name__ == '__main__':
