@@ -25,6 +25,7 @@ def createDB():
                     record_date INTEGER,
                     FOREIGN KEY(qid) REFERENCES questions(qid));''')
     con.commit()
+    cur.close()
     con.close()
     print('database created')
 
@@ -65,6 +66,7 @@ def addQuestion(site, data):
                 (qid, question['view_count'], int(time.time())))
 
     con.commit()
+    cur.close()
     con.close()
 
 def addViewCount(qid, data):
@@ -80,5 +82,24 @@ def addViewCount(qid, data):
                 (qid, question['view_count'], int(time.time())))
 
     con.commit()
+    cur.close()
     con.close()
     
+def getAllActiveQuestions():
+    con = sqlite3.connect(db_file)
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    cur.execute('''SELECT *
+                   FROM questions
+                   WHERE active = 1''')
+
+    rows = cur.fetchall()
+
+    cur.close()
+    con.close()
+
+    return rows
+
+
+
