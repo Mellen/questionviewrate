@@ -69,6 +69,53 @@ def addQuestion(site, data):
     cur.close()
     con.close()
 
+def deactivateQuestion(site, seqid):
+    con = sqlite3.connect(db_file)
+    cur = con.cursor()
+
+    cur.execute('''UPDATE questions
+                   SET active = 0
+                   WHERE site = :site
+                   AND seqid = :seqid''',
+                {'site':site, 'seqid':seqid})
+
+    con.commit()
+    cur.close()
+    con.close()
+
+    print('No longer tracking the question')
+
+def fullQuestionRemove(site, seqid):
+    con = sqlite3.connect(db_file)
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    cur.execute('''SELECT qid, title
+                   FROM questions
+                   WHERE site = :site
+                   AND seqid = :seqid''',
+                {'site':site, 'seqid':seqid})
+
+    q = cur.fetchone()
+    qid = q['qid']
+    title = q['title']
+
+    print(f'Deleting all data realting to "{title}"')
+
+    cur.execute('''DELETE FROM views
+                   WHERE qid = :qid''',
+                {'qid': qid})
+
+    cur.execute('''DELETE FROM questions
+                   WHERE qid = :qid''',
+                {'qid': qid})
+
+    con.commit()
+    cur.close()
+    con.close()
+
+    print('Finished deleting.')
+
 def addViewCount(qid, data):
     con = sqlite3.connect(db_file)
     cur = con.cursor()
