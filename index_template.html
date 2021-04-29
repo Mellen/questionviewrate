@@ -10,9 +10,42 @@
     <ul>
       {% for q in qs %}
       <li>
-        <a class="showChartLink" href="#{{ q['qid'] }}">{{ q['title'] }}</a>
+        <h3><a class="showChartLink" href="#q{{ q['qid'] }}">{{ q['title']|safe }}</a></h3>
+        <p><a href="{{ q['link'] }}" target="_blank">Go to the question</a></p>
       </li>
       {% endfor %}
     </ul>
+    <div id="chartholder"></div>
+    <script src="chart.js">
+    </script>
+    <script>
+       (function()
+       {
+           const chartholder = document.getElementById('chartholder');
+
+           const viewcounts =
+           {
+               {% for q in qs %}
+               '{{q["qid"]}}':[],
+               {% endfor %}
+           };
+
+           {% for v in views %}
+           viewcounts['{{v['qid']}}'].push({'views': {{v['view_count']}}, 'time':{{v['record_date']}}});
+           {% endfor %}
+
+           let qlinks = document.querySelectorAll('a.showChartLink');
+           qlinks.forEach(ql =>
+           {
+               ql.addEventListener('click', e =>
+               {
+                   let qid = e.target.href.split('#q')[1];
+                   chart(chartholder, viewcounts[qid]);
+                   e.preventDefault();
+                   return false;
+               });
+           });
+      })();
+    </script>
   </body>
 </html>
