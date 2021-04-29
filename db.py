@@ -23,6 +23,7 @@ def createDB():
                     qid INTEGER NOT NULL,
                     view_count INTEGER NOT NULL,
                     record_date INTEGER,
+                    UNIQUE(qid, view_count, record_date),
                     FOREIGN KEY(qid) REFERENCES questions(qid));''')
     con.commit()
     cur.close()
@@ -58,6 +59,16 @@ def addQuestion(site, data):
                        SET active = 1
                        WHERE qid = :qid''',
                     {'qid':qid})
+
+    try:
+        cur.execute('''INSERT INTO views
+                      (qid, view_count, record_date)
+                      VALUES
+                      (?, ?, ?);''',
+                (qid, 0, int(question['creation_date'])))
+    except sqlite3.IntegrityError:
+        print('already has a creation date view_count')
+
 
     cur.execute('''INSERT INTO views
                    (qid, view_count, record_date)
@@ -148,5 +159,18 @@ def getAllActiveQuestions():
 
     return rows
 
+def getViewCountsPerQuestion(qid):
+    con = sqlite3.connect(db_file)
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
 
+    cur.execute('''SELECT *
+                   FROM views
+                   WHERE qid = ?''', (qid,))
 
+    rows = cur.fetchall()
+
+    cur.close()
+    con.close()
+
+    return rows
