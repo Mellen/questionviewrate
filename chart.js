@@ -13,7 +13,7 @@ function chart(container, data)
     if(viewWidth > viewHeight)
     {
         chartWidth = viewWidth * 0.8;
-        chartHeight = chartWidth;
+        chartHeight = viewHeight * 0.8;
     }
     else
     {
@@ -109,7 +109,40 @@ function chart(container, data)
 
     g.appendChild(yAxis);
 
-    putTicksOnYAxis(yAxisY1, yAxisY2, yAxisX1, vlRect, g, 15);
+    putTicksOnYAxis(yAxisY1, yAxisY2, yAxisX1, vlRect, g, 15, maxViews);
+
+    plotData(xAxisX1, xAxisX2, yAxisY1, yAxisY2, data, minTime, maxTime, maxViews, g);
+}
+
+function plotData(x1, x2, y1, y2, data, minX, maxX, maxY, g)
+{
+    const xmlns = 'http://www.w3.org/2000/svg';
+    let line = document.createElementNS(xmlns, 'polyline');
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', 'red');
+    line.setAttribute('stroke-width', 2);
+    let maxXValDiff = maxX - minX;
+    let maxXPosDiff = x2 - x1;
+    let points = data.reduce((pStr, datum) =>
+                             {
+                                 if(datum['time'] == minX)
+                                 {
+                                     pStr = `${x1},${y1} `;
+                                 }
+                                 else
+                                 {
+                                     let relXVal = (maxX - datum['time'])/maxXValDiff;
+                                     let x = (x2 - x2*relXVal)+x1;
+
+                                     let relYVal = datum['views']/maxY;
+                                     let y = (y1 - y1*relYVal)+y2;
+
+                                     pStr += `${x},${y} `;
+                                 }
+                                 return pStr;
+                             }, '');
+    line.setAttribute('points', points);
+    g.appendChild(line);
 }
 
 function putTicksOnXAxis(x1, x2, y, labelRect, g, tickCount)
@@ -141,7 +174,7 @@ function putTicksOnXAxis(x1, x2, y, labelRect, g, tickCount)
     }
 }
 
-function putTicksOnYAxis(y1, y2, x, labelRect, g, tickCount)
+function putTicksOnYAxis(y1, y2, x, labelRect, g, tickCount, maxValue)
 {
     const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -158,5 +191,20 @@ function putTicksOnYAxis(y1, y2, x, labelRect, g, tickCount)
         tick.setAttribute('y2', y+'px');
         tick.setAttribute('stroke', 'black');
         g.appendChild(tick);
+        if(i%3 == 0)
+        {
+            let point = document.createElementNS(xmlns, 'text');
+            point.innerHTML = Math.floor(maxValue/tickCount*i);
+            point.setAttribute('x', x2-labelRect.width*2);
+            g.appendChild(point);
+            let  pbox = point.getBBox()
+            point.setAttribute('y', y+pbox.height/2);
+        }
+        let point = document.createElementNS(xmlns, 'text');
+        point.innerHTML = maxValue;
+        point.setAttribute('x', x2-labelRect.width*2);
+        g.appendChild(point);
+        let  pbox = point.getBBox()
+        point.setAttribute('y', y2+pbox.height/2);
     }
 }
