@@ -79,7 +79,7 @@ function chart(container, data)
 
     let halfdays = ((maxTime - minTime)/3600)/12
 
-    let xAxisX1 = vlRect.width*4;
+    let xAxisX1 = vlRect.width*6;
     let xAxisX2 = chartWidth - vlRect.width*2;
     let xAxisY1 = chartHeight - tlRect.height*4;
     let xAxisY2 = xAxisY1;
@@ -194,17 +194,45 @@ function putTicksOnYAxis(y1, y2, x, labelRect, g, tickCount, maxValue)
         if(i%3 == 0)
         {
             let point = document.createElementNS(xmlns, 'text');
-            point.innerHTML = Math.floor(maxValue/tickCount*i);
-            point.setAttribute('x', x2-labelRect.width*2);
+            let value = Math.floor(maxValue/tickCount*i);
+            if(value > 999)
+            {
+                value = trancateNumber(value);
+            }
+            point.innerHTML = value;
             g.appendChild(point);
-            let  pbox = point.getBBox()
+            let pbox = point.getBBox()
             point.setAttribute('y', y+pbox.height/2);
+            let extra = pbox.width/labelRect.width+0.5;
+            point.setAttribute('x', x2-labelRect.width*extra);
         }
         let point = document.createElementNS(xmlns, 'text');
-        point.innerHTML = maxValue;
-        point.setAttribute('x', x2-labelRect.width*2);
+        let value = maxValue;
+        if(value > 999)
+        {
+            value = trancateNumber(value);
+        }
+        point.innerHTML = value;
         g.appendChild(point);
-        let  pbox = point.getBBox()
+        let pbox = point.getBBox()
+        let extra = pbox.width/labelRect.width+0.5;
         point.setAttribute('y', y2+pbox.height/2);
+        point.setAttribute('x', x2-labelRect.width*extra);
+    }
+}
+
+
+function trancateNumber(number)
+{
+    const mags = ['K', 'M', 'B', 'T'];
+    let pow = Math.floor(Math.log10(number));
+    let thou = Math.floor(pow/3) - 1;
+    if(pow%3 == 0)
+    {
+        return (number / 10**pow).toFixed(1)+mags[thou];
+    }
+    else
+    {
+        return Math.floor(number / 10**pow)+mags[thou];
     }
 }
