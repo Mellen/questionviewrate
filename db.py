@@ -166,7 +166,8 @@ def getViewCountsPerQuestion(qid):
 
     cur.execute('''SELECT *
                    FROM views
-                   WHERE qid = ?''', (qid,))
+                   WHERE qid = ?
+                   ORDER BY record_date''', (qid,))
 
     rows = cur.fetchall()
 
