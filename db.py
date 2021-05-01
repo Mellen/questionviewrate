@@ -111,7 +111,7 @@ def fullQuestionRemove(site, seqid):
     qid = q['qid']
     title = q['title']
 
-    print('Deleting all data realting to "{title}"'.format(**{'title':title}}))
+    print('Deleting all data realting to "{title}"'.format(**{'title':title}))
 
     cur.execute('''DELETE FROM views
                    WHERE qid = :qid''',
