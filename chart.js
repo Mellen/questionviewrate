@@ -28,21 +28,42 @@ function chart(container, data)
 
     svg.appendChild(g);
 
-    let vlHolder = document.createElementNS(xmlns, 'g');
     let viewsLabel = document.createElementNS(xmlns, 'text');
-    viewsLabel.setAttribute('rotate', 270);
-    viewsLabel.setAttribute('letter-spacing', '4');
-    viewsLabel.innerHTML = 'Views';
+       
+    g.appendChild(viewsLabel);//append before getting size else it has no size.
 
-    vlHolder.appendChild(viewsLabel);
-    vlHolder.setAttribute('transform', 'rotate(90,0,0)');
+    let V = document.createElementNS(xmlns, 'tspan');
+    V.innerHTML = 'V';
+    V.setAttribute('dy', '0');
+    V.setAttribute('dx', '0');
+    viewsLabel.appendChild(V);
+    let VRect = V.getBBox();
+    let ispan = document.createElementNS(xmlns, 'tspan');
+    ispan.innerHTML = 'i';
+    viewsLabel.appendChild(ispan);
+    ispan.setAttribute('dy', '1em');
+    ispan.setAttribute('dx', (-1*VRect.width*2/3)+'px');
+    let irect = ispan.getBBox();
+    let espan = document.createElementNS(xmlns, 'tspan');
+    espan.innerHTML = 'e';
+    viewsLabel.appendChild(espan);
+    espan.setAttribute('dy', '1em');
+    espan.setAttribute('dx', ((-1*VRect.width)+(irect.width))+'px');
+    let wspan = document.createElementNS(xmlns, 'tspan');
+    wspan.innerHTML = 'w';
+    viewsLabel.appendChild(wspan);
+    wspan.setAttribute('dy', '1em');
+    wspan.setAttribute('dx', (-1*VRect.width)+'px');
+    let sspan = document.createElementNS(xmlns, 'tspan');
+    sspan.innerHTML = 's';
+    viewsLabel.appendChild(sspan);
+    sspan.setAttribute('dy', '1em');
+    sspan.setAttribute('dx', (-1*VRect.width)+'px');
     
-    g.appendChild(vlHolder);//append before getting size else it has no size.
 
-    let vlhRect = vlHolder.getBBox();
-    //because of the rotation x is vertical and y is horizontal and negative
-    viewsLabel.setAttribute('y', -1*vlhRect.height);
-    viewsLabel.setAttribute('x', chartHeight/2 - vlhRect.width/2);
+    let vlRect = viewsLabel.getBBox();
+    viewsLabel.setAttribute('x', vlRect.width);
+    viewsLabel.setAttribute('y', chartHeight/2 - vlRect.height/2);
 
     let tlHolder = document.createElementNS(xmlns, 'g');
     let timeLabel = document.createElementNS(xmlns, 'text');
