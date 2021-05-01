@@ -8,7 +8,7 @@ from db import getAllActiveQuestions, addViewCount
 api_base_url = 'https://api.stackexchange.com/2.2/questions/'
 
 def getQuestionData(site, qid):
-    url = f'{api_base_url}{qid}?site={site}'
+    url = '{api_base_url}{qid}?site={site}'.format(**{'api_base_url':api_base_url, 'qid':qid, 'site':site})
     resp = urlopen(url)
     decompressed_bytes = zlib.decompress(resp.read(), 16+zlib.MAX_WBITS)
     resp.close();
