@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from poll import getQuestionData
 from db import db_file, createDB, addQuestion

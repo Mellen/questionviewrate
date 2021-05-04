@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 from db import getAllActiveQuestions, getViewCountsPerQuestion
